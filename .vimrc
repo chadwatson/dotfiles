@@ -26,8 +26,6 @@ Plug 'valloric/youcompleteme'
 Plug 'tpope/vim-surround'
 Plug 'ternjs/tern_for_vim'
 Plug 'scrooloose/nerdcommenter'
-
-" These plugins are in beta (my beta (as in I try them out everyonce in awhile))
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'rking/ag.vim'
@@ -35,6 +33,9 @@ Plug 'Chun-Yang/vim-action-ag'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'danro/rename.vim'
 Plug 'w0rp/ale'
+Plug 'joshdick/onedark.vim'
+Plug 'tpope/vim-unimpaired'
+Plug 'styled-components/vim-styled-components'
 
 " Initialize plugin system
 call plug#end()
@@ -50,7 +51,7 @@ set tabstop=2 softtabstop=0 shiftwidth=2 smarttab expandtab
 autocmd Filetype php setlocal shiftwidth=4
 
 set background=dark
-colorscheme nord 
+colorscheme onedark 
 syntax on
 
 " autocmd Filetype gitcommit setlocal spell textwidth=72
@@ -61,6 +62,8 @@ let g:ctrlp_map = '<c-p>'
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn)|node_modules$'
   \ }
+let g:ctrlp_working_path_mode = 0
+let g:ctrlp_dont_split = 'NERD'
 
 " vim-move Settings
 
