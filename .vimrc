@@ -1,13 +1,8 @@
-set nocompatible               " be iMprovedg
 filetype off                   " required!
 
 set timeout ttimeoutlen=50
 
 call plug#begin('~/.vim/plugged')
-
-"these plugins are useless, but fun
-Plug 'koron/nyancat-vim'
-Plug 'uguu-org/vim-matrix-screensaver'
 
 " Here are plugins that actually mean something
 Plug 'vim-airline/vim-airline'
@@ -35,7 +30,19 @@ Plug 'danro/rename.vim'
 Plug 'w0rp/ale'
 Plug 'joshdick/onedark.vim'
 Plug 'tpope/vim-unimpaired'
-Plug 'styled-components/vim-styled-components'
+Plug 'matze/vim-move'
+Plug 'scrooloose/nerdcommenter'
+Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-repeat'
+Plug 'eagletmt/ghcmod-vim'
+Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-jdaddy'
+Plug 'jiangmiao/auto-pairs'
+" Plug 'reasonml-editor/vim-reason-plus'
+" Plug 'autozimu/LanguageClient-neovim', {'tag': 'binary-*-x86_64-apple-darwin'}
+" Plug 'roxma/nvim-completion-manager'
+Plug 'purescript-contrib/purescript-vim'
 
 " Initialize plugin system
 call plug#end()
@@ -48,11 +55,12 @@ set backspace=indent,eol,start
 " By default use 2 spaces
 set tabstop=2 softtabstop=0 shiftwidth=2 smarttab expandtab
 " Define space/tab rules for certain file type
-autocmd Filetype php setlocal shiftwidth=4
+autocmd Filetype php setlocal shiftwidth=2
 
 set background=dark
 colorscheme onedark 
 syntax on
+set hlsearch
 
 " autocmd Filetype gitcommit setlocal spell textwidth=72
 " autocmd Filetype txt setlocal spell
@@ -74,10 +82,10 @@ map <Leader>kb :NERDTreeToggle<CR>
 map <Leader>8 :noh<CR>
 " map <Leader>x :x<cr>
 " map <Leader>q :q<cr>
-" map <Leader>w :w<cr>
+map <Leader>w :w<cr>
 " map <Leader>qa :qa<cr>
-" map <Leader>p :set paste<cr>
-" map <Leader>pn :set nopaste<cr>
+map <Leader>p :set paste<cr>
+map <Leader>pn :set nopaste<cr>
 " map <Leader>r :w ! ruby<cr>
 " map <Leader>s :w ! rspec<cr>
 " map <Leader>df :call delete(expand('%'))<cr>
@@ -101,25 +109,28 @@ highlight SpecialKey guifg=#707880
 set laststatus=2
 let g:airline_theme = 'hybrid'
 
-" Syntastic Settings
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_javascript_checkers=['eslint']
-let g:syntastic_javascript_eslint_exe='node_modules/.bin/eslint'
-
 " JSX Settings
 let g:jsx_ext_required = 0
 
 " Merlin Settings
-" let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-" execute 'set rtp+=' . g:opamshare . '/merlin/vim'
+let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+execute "set rtp+=" . g:opamshare . "/merlin/vim"
 
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 
+" LanguageClient Settings
+" set runtimepath+=~/.vim-plugins/LanguageClient-neovim
+" set hidden
+
 " NERDTree Settings
+
+" NERD Commenter Settings
+let g:NERDSpaceDelims = 1
+
+" ALE Settings
+let g:ale_fixers = {}
+let g:ale_fixers['javascript'] = ['prettier', 'eslint']
+let g:ale_fix_on_save = 1
+let g:airline#extensions#ale#enabled = 1
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
