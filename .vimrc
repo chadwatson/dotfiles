@@ -2,6 +2,12 @@ filetype off                   " required!
 
 set timeout ttimeoutlen=50
 
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 call plug#begin('~/.vim/plugged')
 
 " Here are plugins that actually mean something
@@ -26,7 +32,6 @@ Plug 'rking/ag.vim'
 Plug 'Chun-Yang/vim-action-ag'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'danro/rename.vim'
-Plug 'w0rp/ale'
 Plug 'Rigellute/shades-of-purple.vim'
 Plug 'joshdick/onedark.vim'
 Plug 'tpope/vim-unimpaired'
@@ -46,6 +51,11 @@ Plug 'purescript-contrib/purescript-vim'
 Plug 'jparise/vim-graphql'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'mileszs/ack.vim'
+Plug 'HerringtonDarkholme/yats.vim'
+Plug 'guns/vim-sexp'
+Plug 'tpope/vim-sexp-mappings-for-regular-people'
+Plug 'jxnblk/vim-mdx-js'
+Plug 'gabrielelana/vim-markdown'
 
 " For func argument completion
 Plug 'Shougo/neosnippet'
@@ -129,30 +139,9 @@ let g:jsx_ext_required = 0
 " NERD Commenter Settings
 let g:NERDSpaceDelims = 1
 
-" JavaScript Settings
-let g:javascript_plugin_flow = 1
-
-" ALE Settings
-let g:ale_linters = {'javascript': ['eslint']}
-let g:ale_fixers = {'javascript': ['prettier', 'eslint']}
-let g:ale_fix_on_save = 1
-let g:ale_completion_enabled = 1
-let g:ale_linters_explicit = 1
-let g:airline#extensions#ale#enabled = 1
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
-highlight clear ALEErrorSign
-highlight clear ALEWarningSign
-let g:ale_sign_error = '❌'
-let g:ale_sign_warning = '⚠️'
-let g:ale_statusline_format = ['X %d', '? %d', '']
-" %linter% is the name of the linter that provided the message
-" %s is the error or warning message
-let g:ale_echo_msg_format = '%linter% says %s'
-
 " fzf mappings
 nnoremap <c-p> :GFiles<cr>
-nmap <Leader>f :GFiles<CR>
+nnoremap <c-a> :GFiles?<cr>
 nmap <Leader>F :Files<CR>
 nmap <Leader>b :Buffers<CR>
 nmap <Leader>h :History<CR>
@@ -204,8 +193,8 @@ inoremap <silent><expr> <c-space> coc#refresh()
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 " Use `[c` and `]c` to navigate diagnostics
-nmap <silent> [c <Plug>(coc-diagnostic-prev)
-nmap <silent> ]c <Plug>(coc-diagnostic-next)
+nmap <silent> <C-k> <Plug>(coc-diagnostic-prev)
+nmap <silent> <C-j> <Plug>(coc-diagnostic-next)
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
@@ -270,21 +259,63 @@ set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Using CocList
 " Show all diagnostics
-nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+nnoremap <silent> <leader>a  :<C-u>CocList diagnostics<cr>
 " Manage extensions
-nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
+nnoremap <silent> <leader>e  :<C-u>CocList extensions<cr>
 " Show commands
-nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+nnoremap <silent> <leader>c  :<C-u>CocList commands<cr>
 " Find symbol of current document
-nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+nnoremap <silent> <leader>o  :<C-u>CocList outline<cr>
 " Search workspace symbols
-nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+nnoremap <silent> <leader>s  :<C-u>CocList -I symbols<cr>
 " Do default action for next item.
-nnoremap <silent> <space>j  :<C-u>CocNext<CR>
+nnoremap <silent> <leader>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
-nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
+nnoremap <silent> <leader>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
-nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+nnoremap <silent> <leader>p  :<C-u>CocListResume<CR>
+" Open coc-todolist
+nnoremap <silent> <leader>tl  :<C-u>CocList todolist<CR>
+
+" Use leader T to show documentation in preview window
+nnoremap &lt;leader&gt;t :call &lt;SID&gt;show_documentation()&lt;CR&gt;
+
+" Open yank list for coc-yank
+nnoremap <silent> <leader>y  :<C-u>CocList -A --normal yank<cr>
+
+" coc-prettier
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('&lt;cword&gt;')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" instead of having ~/.vim/coc-settings.json
+let s:LSP_CONFIG = {
+\  'flow': {
+\    'command': exepath('flow'),
+\    'args': ['lsp'],
+\    'filetypes': ['javascript', 'javascriptreact'],
+\    'initializationOptions': {},
+\    'requireRootPattern': 1,
+\    'settings': {},
+\    'rootPatterns': ['.flowconfig']
+\  }
+\}
+
+let s:languageservers = {}
+for [lsp, config] in items(s:LSP_CONFIG)
+  let s:not_empty_cmd = !empty(get(config, 'command'))
+  if s:not_empty_cmd | let s:languageservers[lsp] = config | endif
+endfor
+
+if !empty(s:languageservers)
+  call coc#config('languageserver', s:languageservers)
+  endif
 
 " The Silver Searcher support
 let g:ackprg = 'ag --nogroup --nocolor --column'
