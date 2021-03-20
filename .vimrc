@@ -51,11 +51,12 @@ Plug 'purescript-contrib/purescript-vim'
 Plug 'jparise/vim-graphql'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'mileszs/ack.vim'
-Plug 'HerringtonDarkholme/yats.vim'
 Plug 'guns/vim-sexp'
 Plug 'tpope/vim-sexp-mappings-for-regular-people'
 Plug 'jxnblk/vim-mdx-js'
 Plug 'gabrielelana/vim-markdown'
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
 
 " For func argument completion
 Plug 'Shougo/neosnippet'
@@ -68,6 +69,10 @@ filetype plugin indent on    " required
 
 set rnu
 set backspace=indent,eol,start
+
+setlocal autoindent
+setlocal cindent
+setlocal smartindent
 
 " By default use 2 spaces
 set tabstop=2 softtabstop=0 shiftwidth=2 smarttab expandtab
@@ -319,3 +324,6 @@ if !empty(s:languageservers)
 
 " The Silver Searcher support
 let g:ackprg = 'ag --nogroup --nocolor --column'
+
+" set filetypes as typescriptreact
+autocmd BufNewFile,BufRead *.tsx,*.jsx set filetype=typescriptreact
